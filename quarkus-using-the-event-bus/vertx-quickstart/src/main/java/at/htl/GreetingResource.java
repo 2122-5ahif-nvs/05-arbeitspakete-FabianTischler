@@ -3,6 +3,8 @@ package at.htl;
 import io.quarkus.vertx.ConsumeEvent;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
+import io.vertx.mutiny.core.eventbus.Message;
+
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -25,5 +27,11 @@ public class GreetingResource {
     @ConsumeEvent("greeting")
     public Uni<String> consume2(String name){
         return Uni.createFrom().item(() -> name.toUpperCase()).emitOn(executor);
+    }
+
+    @ConsumeEvent("greeting")
+    public void consume3(Message<String> msg){
+        System.out.println(msg.address());
+        System.out.println(msg.body());
     }
 }
