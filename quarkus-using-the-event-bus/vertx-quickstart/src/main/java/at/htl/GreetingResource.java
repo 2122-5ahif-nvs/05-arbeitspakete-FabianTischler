@@ -1,16 +1,29 @@
 package at.htl;
 
+import io.quarkus.vertx.ConsumeEvent;
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.concurrent.Executor;
 
-@Path("/hello")
+@ApplicationScoped
 public class GreetingResource {
+    @Inject
+    Executor executor;
 
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Hello RESTEasy";
+    @ConsumeEvent("greeting")
+    public String consume(String name){
+        return name.toUpperCase();
+    }
+
+    @ConsumeEvent("greeting")
+    public Uni<String> consume2(String name){
+        return Uni.createFrom().item(() -> name.toUpperCase()).emitOn(executor);
     }
 }
