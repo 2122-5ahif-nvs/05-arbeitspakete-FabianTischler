@@ -4,14 +4,14 @@ Fabian Tischler
 
 == Websockets
 
-=== Extensions:
+=== Extensions
 * websockets
 
 ----
 ./mvnw quarkus:add-extension -Dextensions="websockets"
 ----
 
-=== Annotations:
+=== Annotations
 * @OnOpen
 
 [source, java]
@@ -58,14 +58,47 @@ public void onMessage(String message, @PathParam("username") String username) {
 }
 ----
 
+Don't forget to edit your index.html file to get a slick frontend!
+
 == Eventbus
 
-=== Extensions:
+=== Extensions
 * vertx
-* resteasy-mutiny
 
 ----
 ./mvnw quarkus:add-extension -Dextensions="vertx, resteasy-mutiny"
 ----
 
+=== Example Service
 
+[source, java]
+----
+@ApplicationScoped
+public class GreetingService {
+
+    @ConsumeEvent("greeting")
+    public String greeting(String name) {
+        return "Hello " + name;
+    }
+
+}
+----
+
+=== Example Resource
+
+[source, java]
+----
+@Path("/async")
+public class EventResource {
+    @Inject
+    EventBus bus;
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("{name}")
+    public Uni<String> greeting(@PathParam String name) {
+        return bus.<String>request("greeting", name)
+                .onItem().transform(Message::body);
+    }
+}
+----
