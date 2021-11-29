@@ -11,7 +11,52 @@ Fabian Tischler
 ./mvnw quarkus:add-extension -Dextensions="websockets"
 ----
 
+=== Annotations:
+* @OnOpen
 
+[source, java]
+----
+@OnOpen
+public void onOpen(Session session, @PathParam("username") String username) {
+    sessions.put(username, session);
+}
+----
+
+* @OnClose
+
+[source, java]
+----
+@OnClose
+public void onClose(Session session, @PathParam("username") String username) {
+    sessions.remove(username);
+    broadcast("User " + username + " left");
+}
+----
+
+* @OnError
+
+[source, java]
+----
+@OnError
+public void onError(Session session, @PathParam("username") String username, Throwable throwable) {
+    sessions.remove(username);
+    broadcast("User " + username + " left on error: " + throwable);
+}
+----
+
+* @OnMessage
+
+[source, java]
+----
+@OnMessage
+public void onMessage(String message, @PathParam("username") String username) {
+    if (message.equalsIgnoreCase("_ready_")) {
+        broadcast("User " + username + " joined");
+    } else {
+        broadcast(">> " + username + ": " + message);
+    }
+}
+----
 
 == Eventbus
 
