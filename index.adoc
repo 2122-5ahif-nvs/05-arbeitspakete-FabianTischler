@@ -1,0 +1,26 @@
+= 05-Arbeitspakete-Tischler Websockets und Eventbus
+Fabian Tischler
+1.0.0, 2021-11-29
+
+== Websockets
+
+=== Extensions:
+* websockets
+
+----
+./mvnw quarkus:add-extension -Dextensions="websockets"
+----
+
+
+
+== Eventbus
+
+=== Extensions:
+* vertx
+* resteasy-mutiny
+
+----
+./mvnw quarkus:add-extension -Dextensions="vertx, resteasy-mutiny"
+----
+
+
